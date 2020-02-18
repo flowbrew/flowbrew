@@ -1,0 +1,57 @@
+{
+  "name": "gatsby-starter-hello-world",
+  "private": true,
+  "description": "A simplified bare-bones starter for Gatsby",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "start": "npm run develop",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.9.2",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.42",
+    "@material-ui/styles": "^4.9.0",
+    "@mdx-js/mdx": "^1.5.5",
+    "@mdx-js/react": "^1.5.5",
+    "gatsby": "^2.19.7",
+    "gatsby-background-image": "^0.9.17",
+    "gatsby-image": "^2.2.41",
+    "gatsby-plugin-material-ui": "^2.1.6",
+    "gatsby-plugin-mdx": "^1.0.73",
+    "gatsby-plugin-react-helmet": "^3.1.22",
+    "gatsby-plugin-sharp": "^2.4.5",
+    "gatsby-source-filesystem": "^2.1.48",
+    "gatsby-transformer-javascript-frontmatter": "^2.1.24",
+    "gatsby-transformer-json": "^2.2.26",
+    "gatsby-transformer-sharp": "^2.3.14",
+    "gatsby-transformer-yaml": "^2.2.25",
+    "intersection-observer": "^0.7.0",
+    "lodash": "^4.17.15",
+    "lorem-ipsum": "^2.0.3",
+    "ramda": "^0.27.0",
+    "react": "^16.12.0",
+    "react-aspect-ratio": "^1.0.41",
+    "react-dom": "^16.12.0",
+    "react-helmet": "^5.2.1",
+    "react-resize-to-aspect-ratio": "^1.0.7",
+    "typeface-roboto": "0.0.75",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gatsbyjs/gatsby-starter-hello-world"
+  },
+  "bugs": {
+    "url": "https://github.com/gatsbyjs/gatsby/issues"
+  }
+}
