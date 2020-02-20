@@ -87,20 +87,21 @@ const couponCookie = (product, code) => `${product.pid}_${code}`
 const couponLastCookie = product => `Last_promocode_of_${product.pid}`
 
 const discountCouponIO = (product, code) => {
+  const code2 = code ? code.toUpperCase() : ""
   const currentTime = new Date()
-  const coupon = loadCouponIO(product, code, currentTime)
+  const coupon = loadCouponIO(product, code2, currentTime)
 
   if (coupon.expiration < currentTime) {
     return { discount: 0.0 }
   }
 
   if (coupon.discount) {
-    storePromocodeIO(product, code)
+    storePromocodeIO(product, code2)
   }
 
   return {
     product: product,
-    code: code,
+    code: code2,
     discount: coupon.discount,
     coupon_description: couponDescription(coupon, currentTime),
   }
@@ -112,8 +113,9 @@ const lastEnteredPromocodeIO = product => {
 }
 
 const storePromocodeIO = (product, code) => {
+  const code2 = code ? code.toUpperCase() : ""
   const cookies = new Cookies()
-  cookies.set(couponLastCookie(product), code, default_cookie_params)
+  cookies.set(couponLastCookie(product), code2, default_cookie_params)
 }
 
 const applyCoupon = (product, coupon) =>

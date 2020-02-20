@@ -26,8 +26,9 @@ import {
   applyCoupon,
 } from "../discount"
 import { parseLocation } from "../common"
+import { RedBox, CrossedBox } from "../common"
 
-/* TODO: Do not let apply coupons twice */
+/* TODO_: Do not let apply coupons twice */
 
 /* TODO: contact section */
 /* TODO: add buy and back buttons */
@@ -138,20 +139,13 @@ function ccyFormat(num) {
 const allOrderPrices = R.map(R.path(["price"]))
 const totalOrderPrice = R.compose(R.sum, allOrderPrices)
 
-const CrossedBox = styled(Box)({
-  textDecoration: "line-through",
-})
-
-const RedBox = styled(Box)({
-  color: "red",
-})
-
 const formatOrderDesc = (desc, discount_desc) =>
   !discount_desc ? (
     <>{desc}</>
   ) : (
     <>
       {desc}
+      <br/>
       <RedBox>{discount_desc}</RedBox>
     </>
   )
@@ -162,6 +156,7 @@ const formatOrderPrice = (price, orig_price) =>
   ) : (
     <>
       <CrossedBox>{ccyFormat(orig_price)}</CrossedBox>
+      <br/>
       <RedBox>{ccyFormat(price)}</RedBox>
     </>
   )

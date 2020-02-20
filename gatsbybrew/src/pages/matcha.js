@@ -33,9 +33,7 @@ import {
   lastEnteredPromocodeIO,
   applyCoupon,
 } from "../discount"
-
-/* TODO: add ability to display discount */
-/* TODO: load coupon from cookies */
+import { RedBox, CrossedBox } from "../common"
 
 /* TODO: Features sections */
 /* TODO: quantity and headless ecommerce*/
@@ -107,14 +105,22 @@ const OfferHeader = ({ product }) => {
   const orig_price = product.price
   const price = applyCoupon(product, coupon)
 
-  // discount_desc: coupon.coupon_description || ``,
-  // price: product.price * (1.0 - coupon.discount || 0.0),
-
   return (
     <Box>
       <RegularHeader>{lorem.generateWords(2)}</RegularHeader>
       <Rating name="size-medium" defaultValue={5} readOnly />
-      <RegularParagraph>{price}</RegularParagraph>
+      {coupon.discount ? (
+        <RegularParagraph>
+          <CrossedBox>{orig_price}</CrossedBox> <RedBox>{price} руб</RedBox>
+        </RegularParagraph>
+      ) : (
+        <RegularParagraph>{orig_price} руб</RegularParagraph>
+      )}
+      {coupon.coupon_description && (
+        <RedBox>
+          <RegularParagraph>{coupon.coupon_description}</RegularParagraph>
+        </RedBox>
+      )}
     </Box>
   )
 }

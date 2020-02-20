@@ -39,6 +39,8 @@ const useStyles = makeStyles({
   },
 })
 
+/* TODO: hide on scroll down */
+/* TODO: add night theme */
 const Header = ({ data }) => {
   const classes = useStyles()
 
