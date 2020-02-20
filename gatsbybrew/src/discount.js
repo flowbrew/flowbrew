@@ -1,4 +1,5 @@
 import Cookies from "universal-cookie"
+import { parseLocation } from "./common"
 
 /* TODO: add e2e discount test */
 
@@ -151,6 +152,11 @@ const updateVisitHistoryIO = location => {
   return new_history
 }
 
+const applyPromocodeFromQueryIO = (product, location) => {
+  const query = parseLocation(location)
+  const _ = discountCouponIO(product, query.code)
+}
+
 const autoPromotionIO = (product, location) => {
   var history = updateVisitHistoryIO(location)
 
@@ -168,6 +174,8 @@ const autoPromotionIO = (product, location) => {
       storePromocodeIO(product, "GIFT10")
     }
   }
+
+  applyPromocodeFromQueryIO(product, location)
 }
 
 export {

@@ -19,7 +19,6 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import List from "@material-ui/core/List"
 import InnerLink from "../components/InnerLink"
-import { parseLocation } from "../common"
 import ShoppingCart from "@material-ui/icons/ShoppingCart"
 import { discountCouponIO, autoPromotionIO } from "../discount"
 import { useStaticQuery, Link } from "gatsby"
@@ -43,6 +42,8 @@ const useStyles = makeStyles({
 
 /* TODO: hide on scroll down */
 /* TODO: add night theme */
+/* TODO: add link to home */
+
 const Header = ({ data }) => {
   const classes = useStyles()
 
@@ -179,11 +180,6 @@ const Skipper = styled(Box)({
 
 /* --------- */
 
-const applyPromocodeFromQueryIO = (product, location) => {
-  const query = parseLocation(location)
-  const _ = discountCouponIO(product, query.code)
-}
-
 const MainLayout = ({ children, location }) => {
   const data = useStaticQuery(graphql`
     query {
@@ -203,7 +199,6 @@ const MainLayout = ({ children, location }) => {
   `)
 
   autoPromotionIO(data.product, location)
-  applyPromocodeFromQueryIO(data.product, location)
 
   return (
     <FlbTheme>
