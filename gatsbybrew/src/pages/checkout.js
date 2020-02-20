@@ -19,8 +19,12 @@ import TableCell from "@material-ui/core/TableCell"
 import TableContainer from "@material-ui/core/TableContainer"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
+import { discountFrom } from "../discount"
 
-/* HARD: promocode support */
+/* TODO: Get promocode from url params */
+/* TODO: Get promocode from promocode string */
+/* TODO: Apply discount from discount rules */
+
 /* TODO: contact section */
 /* TODO: add buy and back buttons */
 /* TODO: Add image with caption and set caption to product */
@@ -124,11 +128,39 @@ const ShippingInfo = ({ product, address, city, onChange }) => {
 }
 
 function ccyFormat(num) {
-  return `${num.toFixed(2)}`
+  return `${num.toFixed(0)}`
 }
 
 const allOrderPrices = R.map(R.path(["price"]))
 const totalOrderPrice = R.compose(R.sum, allOrderPrices)
+
+const CrossedBox = styled(Box)({
+  textDecoration: "line-through",
+})
+
+const RedBox = styled(Box)({
+  color: "red",
+})
+
+const formatOrderDesc = (desc, discount_desc) =>
+  !discount_desc ? (
+    <>{desc}</>
+  ) : (
+    <>
+      {desc}
+      <RedBox>{discount_desc}</RedBox>
+    </>
+  )
+
+const formatOrderPrice = (price, orig_price) =>
+  !orig_price || price === orig_price ? (
+    <>{ccyFormat(price)}</>
+  ) : (
+    <>
+      <CrossedBox>{ccyFormat(orig_price)}</CrossedBox>
+      <RedBox>{ccyFormat(price)}</RedBox>
+    </>
+  )
 
 const PriceInfo = ({ order }) => (
   <Container>
@@ -142,10 +174,12 @@ const PriceInfo = ({ order }) => (
         </TableHead>
         <TableBody>
           {R.map(
-            ({ desc, price }) => (
+            ({ desc, discount_desc, price, orig_price }) => (
               <TableRow key={desc}>
-                <TableCell>{desc}</TableCell>
-                <TableCell align="right">{ccyFormat(price)}</TableCell>
+                <TableCell>{formatOrderDesc(desc, discount_desc)}</TableCell>
+                <TableCell align="right">
+                  {formatOrderPrice(price, orig_price)}
+                </TableCell>
               </TableRow>
             ),
             order
@@ -177,12 +211,20 @@ const CheckoutForm = ({ data }) => {
   const [state, setState] = React.useState({
     shipping_city: product.shipping[0].destination,
     shipping_address: "",
+    promocode: "",
+    comment: "",
   })
 
   const shipping = getShipping(product, state.shipping_city)
+  const discount = discountFrom(product, state.promocode)
 
   const order = [
-    { desc: `${product.name} ${product.weight} г`, price: product.price },
+    {
+      desc: `${product.name} ${product.weight} г`,
+      discount_desc: discount ? `скидка ${ccyFormat(discount * 100.0)}%` : ``,
+      price: product.price * (1.0 - discount),
+      orig_price: product.price,
+    },
     { desc: "Доставка", price: shipping ? shipping.cost : 0.0 },
   ]
 
@@ -206,8 +248,18 @@ const CheckoutForm = ({ data }) => {
       />
       <PriceInfo order={order} />
       <Container>
-        <MyTextField field="promocode" />
-        <MyTextField field="comment" />
+        <MyTextField
+          name="promocode"
+          field="promocode"
+          value={state.promocode}
+          onChange={handleInputChange}
+        />
+        <MyTextField
+          name="comment"
+          field="comment"
+          value={state.comment}
+          onChange={handleInputChange}
+        />
       </Container>
     </>
   )
