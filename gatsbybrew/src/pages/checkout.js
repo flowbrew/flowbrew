@@ -22,7 +22,6 @@ import TableRow from "@material-ui/core/TableRow"
 import { discountCoupon } from "../discount"
 import { parseLocation } from "../common"
 
-/* TODO: Display promocode timeout */
 /* TODO: Add promocode timeout */
 
 /* TODO: contact section */
@@ -216,14 +215,13 @@ const CheckoutForm = ({ data, query }) => {
   })
 
   const shipping = getShipping(product, state.shipping_city)
-  const coupon = discountCoupon(product, state.promocode)
-  const discount = coupon.discount
+  const coupon = discountCoupon(product, state.promocode, 0)
 
   const order = [
     {
       desc: `${product.name} ${product.weight} г`,
-      discount_desc: discount ? `скидка ${ccyFormat(discount * 100.0)}%` : ``,
-      price: product.price * (1.0 - discount),
+      discount_desc: coupon.coupon_description,
+      price: product.price * (1.0 - coupon.discount),
       orig_price: product.price,
     },
     { desc: "Доставка", price: shipping ? shipping.cost : 0.0 },
