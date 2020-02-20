@@ -33,14 +33,15 @@ import {
   lastEnteredPromocodeIO,
   applyCoupon,
 } from "../discount"
-import { RedBox, CrossedBox } from "../common"
+import { RedBox, CrossedBox, mapIndexed } from "../common"
 
-/* TODO: Features sections */
 /* TODO: quantity and headless ecommerce*/
 /* TODO: faq section*/
 /* TODO: reviews section */
 /* TODO: GTM */
 /* TODO: fonts and colors */
+/* TODO: add mdx render to textblocks */
+/* TODO: fill offer with data */
 
 const PageContext = React.createContext({})
 
@@ -241,6 +242,29 @@ const SignatureSection = () => (
   </Section>
 )
 
+const InDeapthFeature = ({ header, text, image }, position) => {
+  const textBlock = <TextBlock header={header} text={text} />
+  const imageBlock = <RichImage image_name={image} />
+  return (
+    <Section key={position}>
+      <RegularGrid>
+        <Grid item xs={12}>
+          {imageBlock}
+        </Grid>
+        <Grid item xs={12}>
+          {textBlock}
+        </Grid>
+      </RegularGrid>
+    </Section>
+  )
+}
+
+const InDepthFeatures = ({ product }) => {
+  return (
+    <Box>{mapIndexed(InDeapthFeature, product.in_depth_features || [])}</Box>
+  )
+}
+
 export default ({ data, location }) => {
   const Context = ({ children }) => (
     <PageContext.Provider value={data}>
@@ -259,8 +283,7 @@ export default ({ data, location }) => {
     <Context>
       <MainLayout location={location}>
         <Hero />
-        {/*<PlaceholderSection />
-        <PlaceholderSection /> */}
+        <InDepthFeatures product={data.product} />
         <OfferSection data={data} />
         {/* <ReviewsSection />
         <FAQSection />
