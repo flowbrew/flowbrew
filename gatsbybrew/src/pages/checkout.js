@@ -1,14 +1,21 @@
-import React from "react"
+import Box from "@material-ui/core/Box"
 import { graphql } from "gatsby"
 import PageLayout from "../layouts/PageLayout"
 import Img from "gatsby-image"
-import Typography from "@material-ui/core/Typography"
 import TextField from "@material-ui/core/TextField"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Radio from "@material-ui/core/Radio"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import RegularParagraph from "../components/RegularParagraph"
-import { Container } from "@material-ui/core"
+import { Container, Paper, Typography } from "@material-ui/core"
+import { styled } from "@material-ui/styles"
+import theme from "../theme"
+import React, { Component } from "react"
+import * as R from "ramda"
+import {ImageContext} from "../components/ImageDataWrapper"
+
+/* HARD: promocode support */
+/* TODO: shipping switch */
 
 const pageContext = {
   frontmatter: {
@@ -25,46 +32,121 @@ const Product = ({ data }) => (
   </Container>
 )
 
+const STextField = styled(TextField)({
+  marginBottom: theme.spacing(2),
+  width: "100%",
+})
+
+const SRegularParagraph = styled(({ children }) => (
+  <Box style={{ marginBottom: theme.spacing(3) }}>
+    <RegularParagraph>{children}</RegularParagraph>
+  </Box>
+))({
+  marginBottom: theme.spacing(3),
+})
+
 const MyTextField = ({ field }) => (
-  <TextField id={field} label={field} variant="outlined" />
+  <STextField id={field} label={field} variant="outlined" />
 )
+
+// TODO: how to apply styles?
+
+const Panel = styled(Paper)({
+  paddingTop: theme.spacing(2),
+  paddingLeft: theme.spacing(2),
+  paddingRight: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+})
 
 const ContactInfo = () => (
   <Container>
-    <MyTextField field="name" />
-    <MyTextField field="phone" />
-    <RadioGroup aria-label="gender" value="female" name="gender1">
-      <FormControlLabel value="female" control={<Radio />} label="SMS" />
-      <FormControlLabel value="male" control={<Radio />} label="Telegram" />
-      <FormControlLabel value="other" control={<Radio />} label="WhatsApp" />
-      <FormControlLabel value="other2" control={<Radio />} label="Facebook" />
-    </RadioGroup>
+    <Panel>
+      <SRegularParagraph>
+        Если это ваш первый заказ, то вы получите бесплатный набор для заварки.
+      </SRegularParagraph>
+      <MyTextField field="name" />
+      <MyTextField field="phone" />
+    </Panel>
   </Container>
 )
 
-const ShippingInfo = () => (
-  <Container>
-    <RadioGroup aria-label="gender" value="female" name="gender1">
-      <FormControlLabel value="female" control={<Radio />} label="Moscow" />
-      <FormControlLabel
-        value="male"
-        control={<Radio />}
-        label="Saint Petersburg"
-      />
-      <FormControlLabel value="other" control={<Radio />} label="Other" />
-    </RadioGroup>
-    <MyTextField field="address" />
-    <RegularParagraph>Something about shipping</RegularParagraph>
-  </Container>
-)
-
-const Checkout = ({ data }) => {
+const ShippingInfo = ({ product, selected_shipping, onChange }) => {
   return (
-    <PageLayout pageContext={pageContext}>
+    <Container>
+      <Panel>
+        <RadioGroup
+          aria-label="gender"
+          value={selected_shipping}
+          name="gender1"
+          onChange={onChange}
+        >
+          {R.map(
+            ({ destination, cost, description }) => (
+              <FormControlLabel
+                value={{ destination, cost, description }}
+                control={<Radio />}
+                label={destination}
+                key={destination}
+              />
+            ),
+            product.shipping
+          )}
+        </RadioGroup>
+        <MyTextField field="address" />
+        <SRegularParagraph>{selected_shipping.description}</SRegularParagraph>
+      </Panel>
+    </Container>
+  )
+}
+
+const PriceInfo = () => (
+  <Container>
+    <Panel>
+      <SRegularParagraph>
+        Вы можете оплатить заказ после получения. Оплата банковским переводом на
+        карту Сбербанка или Тинькофф.
+      </SRegularParagraph>
+    </Panel>
+  </Container>
+)
+
+const CheckoutForm = ({ data }) => {
+  const [state, setState] = React.useState({
+    selected_shipping: null,
+  })
+
+  const product = data.product
+
+  const onCityChange = event => {
+    setState({ ...state, selected_shipping: event.target.value })
+  }
+  
+  return (
+    <>
       <Product data={data} />
       <ContactInfo />
-      <ShippingInfo />
-    </PageLayout>
+      <ShippingInfo
+          prodcut={product}
+          selected_shipping={null}
+          onChange={onCityChange}
+        />
+      <PriceInfo />
+    </>
+  )
+}
+
+export default ({ data }) => {
+  return (
+    <ImageContext.Provider
+      value={{
+        images_sharp: data.images_sharp,
+        images_data: data.images_data,
+      }}
+    >
+      <PageLayout pageContext={pageContext}>
+        <CheckoutForm data={data} />
+      </PageLayout>
+    </ImageContext.Provider>
   )
 }
 
@@ -77,6 +159,44 @@ export const query = graphql`
         }
       }
     }
+
+    images_data: allImagesYaml {
+      nodes {
+        image
+        name
+        alt
+      }
+    }
+
+    images_sharp: allImageSharp {
+      nodes {
+        fluid {
+          ...GatsbyImageSharpFluid
+          originalName
+        }
+      }
+    }
+
+    product: productsYaml(pid: { eq: "flowbrew60" }) {
+      name
+      pid
+      price
+      quantity
+      images
+      shipping {
+        destination
+        cost
+        description
+      }
+      features {
+        icon
+        text
+      }
+      in_depth_features {
+        header
+        image
+        text
+      }
+    }
   }
 `
-export default Checkout

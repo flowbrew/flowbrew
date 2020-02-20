@@ -1,9 +1,7 @@
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
-import Card from "@material-ui/core/Card"
 import Container from "@material-ui/core/Container"
 import ExpansionPanel from "@material-ui/core/ExpansionPanel"
-import Paper from "@material-ui/core/Paper"
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails"
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary"
 import Grid from "@material-ui/core/Grid"
@@ -11,16 +9,35 @@ import Typography from "@material-ui/core/Typography"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import Rating from "@material-ui/lab/Rating"
 import { graphql } from "gatsby"
-import BackgroundImage from "gatsby-background-image"
-import Img from "gatsby-image"
 import _ from "lodash"
-import React from "react"
-import { RegularGrid, Column2 } from "../components/RegularGrid"
+import * as R from "ramda"
+import React, { Component } from "react"
+import {
+  Hero,
+  ImageContext,
+  MagnifierImage,
+  RichImage,
+} from "../components/ImageDataWrapper"
+import {
+  Column1,
+  Column2,
+  Column4,
+  RegularGrid,
+} from "../components/RegularGrid"
 import RegularHeader from "../components/RegularHeader"
 import RegularParagraph from "../components/RegularParagraph"
 import MainLayout from "../layouts/MainLayout"
-import ImageDataWrapper from "../components/ImageDataWrapper"
 import lorem from "../lorem"
+
+/* TODO: Features sections */
+/* TODO: quantity and headless ecommerce*/
+/* TODO: faq section*/
+/* TODO: reviews section */
+/* TODO: GTM */
+/* HARD: Add discount on the second visit */
+/* TODO: fonts and colors */
+
+const PageContext = React.createContext({})
 
 const Section = ({ children }) => <Container>{children}</Container>
 
@@ -38,40 +55,42 @@ const PlaceholderTextBlock = () => (
   />
 )
 
-const PlaceholderBackgroundImage = ({ children, data }) => {
-  const aspectRatio = 1 / 1
-  return (
-    <Card>
-      <Img
-        fluid={{
-          ...data.matcha.childImageSharp.fluid,
-          aspectRatio: aspectRatio,
-        }}
-      />
-    </Card>
-  )
+class OfferImages extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      selectedImage: null,
+    }
+  }
+
+  render() {
+    const product = this.props.product
+    const selected_image = this.state.selectedImage || product.images[0]
+
+    const click = image_name => {
+      this.setState({ selectedImage: image_name })
+    }
+
+    return (
+      <RegularGrid>
+        <Column1>
+          <MagnifierImage image_name={selected_image} />
+        </Column1>
+        {R.map(
+          x => (
+            <Column4 key={x}>
+              <RichImage image_name={x} onClick={() => click(x)} />
+            </Column4>
+          ),
+          product.images
+        )}
+      </RegularGrid>
+    )
+  }
 }
 
-const OfferImagePreview = () => (
-  <Grid item xs={12}>
-    ImagePreview
-  </Grid>
-)
-
-const OfferImages = () => (
-  <Box>
-    <RegularGrid>
-      <Grid item xs={12}>
-        Image
-      </Grid>
-      <OfferImagePreview />
-      <OfferImagePreview />
-      <OfferImagePreview />
-      <OfferImagePreview />
-    </RegularGrid>
-  </Box>
-)
-
+/* TODO: fancy font*/
+/* TODO: discount display and connet to product price*/
 const OfferHeader = () => (
   <Box>
     <RegularHeader>{lorem.generateWords(2)}</RegularHeader>
@@ -98,6 +117,7 @@ const WorkWithRejections = () => (
 
 const Promotion = () => <RegularParagraph>Осталось 3</RegularParagraph>
 
+/* TODO: buy button design*/
 const BuyButton = () => (
   <Button variant="contained" color="primary" href="/checkout">
     Buy
@@ -128,25 +148,6 @@ const Review = () => (
   </Typography>
 )
 
-const Hero = ({ children, data }) => {
-  return (
-    <BackgroundImage fluid={data.plantation.childImageSharp.fluid}>
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justify="center"
-        style={{ minHeight: "100vh" }}
-      >
-        <Grid item xs={3}>
-          Hello World!
-        </Grid>
-      </Grid>
-    </BackgroundImage>
-  )
-}
-
 const InfoSection = ({ left, right }) => (
   <Section>
     <RegularGrid>
@@ -156,16 +157,18 @@ const InfoSection = ({ left, right }) => (
   </Section>
 )
 
-const OfferSection = () => (
-  <Section>
-    <OfferHeader />
-    <OfferImages />
-    <OfferFeatures />
-    <Promotion />
-    <BuyButton />
-    <WorkWithRejections />
-  </Section>
-)
+const OfferSection = ({ data }) => {
+  return (
+    <Section>
+      <OfferHeader />
+      <OfferImages product={data.product} />
+      <OfferFeatures />
+      <Promotion />
+      <BuyButton />
+      <WorkWithRejections />
+    </Section>
+  )
+}
 
 const SectionWithHeader = ({ header, children }) => (
   <Section>
@@ -212,43 +215,70 @@ const SignatureSection = () => (
   </Section>
 )
 
-const Matcha = ({ data }) => {
-  const img = <PlaceholderBackgroundImage data={data} />
-  const PlaceholderSection = () => (
-    <InfoSection left={img} right={<PlaceholderTextBlock />} />
+export default ({ data }) => {
+  const Context = ({ children }) => (
+    <PageContext.Provider value={data}>
+      <ImageContext.Provider
+        value={{
+          images_sharp: data.images_sharp,
+          images_data: data.images_data,
+        }}
+      >
+        {children}
+      </ImageContext.Provider>
+    </PageContext.Provider>
   )
 
   return (
-    <MainLayout>
-      <Hero data={data} />
-      <PlaceholderSection />
-      <PlaceholderSection />
-      <OfferSection />
-      <ReviewsSection />
-      <FAQSection />
-      <BuyButtonSection />
-      <SignatureSection />
-    </MainLayout>
+    <Context>
+      <MainLayout>
+        <Hero />
+        {/*<PlaceholderSection />
+        <PlaceholderSection /> */}
+        <OfferSection data={data} />
+        {/* <ReviewsSection />
+        <FAQSection />
+        <BuyButtonSection />
+        <SignatureSection /> */}
+      </MainLayout>
+    </Context>
   )
 }
 
 export const query = graphql`
-  query MyQuery {
-    plantation: file(relativePath: { eq: "japan_tea_plantation.jpg" }) {
-      childImageSharp {
-        fluid(maxWidth: 1000, quality: 100) {
+  query {
+    images_data: allImagesYaml {
+      nodes {
+        image
+        name
+        alt
+      }
+    }
+
+    images_sharp: allImageSharp {
+      nodes {
+        fluid {
           ...GatsbyImageSharpFluid
+          originalName
         }
       }
     }
 
-    matcha: file(relativePath: { eq: "gift_matcha_tea_box_from_top_ex.jpg" }) {
-      childImageSharp {
-        fluid {
-          ...GatsbyImageSharpFluid
-        }
+    product: productsYaml(pid: { eq: "flowbrew60" }) {
+      name
+      pid
+      price
+      quantity
+      images
+      features {
+        icon
+        text
+      }
+      in_depth_features {
+        header
+        image
+        text
       }
     }
   }
 `
-export default Matcha

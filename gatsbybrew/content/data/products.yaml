@@ -7,9 +7,23 @@
 
   currency: RUB
   price: 3880
-  shipping: 100
-  fast_shiping: 1100
   weight: 60
+
+  shipping:
+    - destination: "Санкт-Петербург"
+      cost: 0
+      description: >-
+        Мы доставим заказ курьером за 1 день.
+
+    - destination: "Москва"
+      cost: 0
+      description: >-
+        Мы доставим заказ курьером в Москву за 2-4 рабочих дня (не доставляем в выходные и праздники).
+
+    - destination: "Другой город"
+      cost: 100
+      description: >-
+        Мы доставим заказ Почтой России за 1-2 недели. Для заказа укажите свое имя и фамилию.
 
   in-depth-features:
     - header: Венчик и Чаша в Подарок

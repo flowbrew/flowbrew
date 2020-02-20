@@ -25,3 +25,12 @@
 - name: whisk
   image: whisk.jpg
   alt: Венчик часен
+
+- name: japan_tea_plantation
+  image: japan_tea_plantation.jpg
+  alt: Плантация японского чая и гора Фудзияма
+
+- name: logo_text
+  image: logo_text.svg
+  alt: Логотип Flow Brew
+  

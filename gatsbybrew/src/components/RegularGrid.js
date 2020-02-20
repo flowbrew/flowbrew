@@ -9,10 +9,22 @@ const RegularGrid = ({ children }) => {
   )
 }
 
+const Column1 = ({ children }) => (
+  <Grid item xs={12}>
+    {children}
+  </Grid>
+)
+
 const Column2 = ({ children }) => (
   <Grid item xs={12} sm={6}>
     {children}
   </Grid>
 )
 
-export { RegularGrid, Column2 }
+const Column4 = ({ children }) => (
+  <Grid item xs={3}>
+    {children}
+  </Grid>
+)
+
+export { RegularGrid, Column1, Column2, Column4 }
