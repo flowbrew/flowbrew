@@ -28,8 +28,6 @@ import {
 import { parseLocation } from "../common"
 import { RedBox, CrossedBox } from "../common"
 
-/* TODO_: Do not let apply coupons twice */
-
 /* TODO: contact section */
 /* TODO: add buy and back buttons */
 /* TODO: Add image with caption and set caption to product */

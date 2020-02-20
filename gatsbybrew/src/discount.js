@@ -85,6 +85,18 @@ const loadCouponIO = (product, code, currentTime) => {
   return { ...cookie, ...{ expiration: new Date(cookie.expiration) } }
 }
 
+const expirePromocodeIO = (product, code) => {
+  const cookies = new Cookies()
+
+  const cookie_name = couponCookie(product, code)
+  const cookie = cookies.get(cookie_name) || { discount: 0 }
+
+  const coupon = { ...cookie, ...{ expiration: new Date(1980, 1, 1) } }
+
+  storePromocodeIO(product, "")
+  cookies.set(cookie_name, coupon, default_cookie_params)
+}
+
 const couponCookie = (product, code) => `${product.pid}_${code}`
 const couponLastCookie = product => `Last_promocode_of_${product.pid}`
 
@@ -142,11 +154,19 @@ const updateVisitHistoryIO = location => {
 const autoPromotionIO = (product, location) => {
   var history = updateVisitHistoryIO(location)
 
-  const promotion1 = (history["/matcha"] || 0) == 2
-  const promotion2 = (history["/checkout"] || 0) == 1
+  const code = lastEnteredPromocodeIO(product)
 
-  if (promotion1 || promotion2) {
-    storePromocodeIO(product, "GIFT10")
+  if (location.pathname == encodeURI(`/спасибо`)) {
+    if (code) {
+      expirePromocodeIO(product, code)
+    }
+  } else if (!code) {
+    const promotion1 = (history["/matcha"] || 0) == 2
+    const promotion2 = (history["/checkout"] || 0) == 1
+
+    if (promotion1 || promotion2) {
+      storePromocodeIO(product, "GIFT10")
+    }
   }
 }
 
