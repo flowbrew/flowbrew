@@ -19,10 +19,13 @@ import TableCell from "@material-ui/core/TableCell"
 import TableContainer from "@material-ui/core/TableContainer"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
-import { discountCouponIO } from "../discount"
+import {
+  discountCouponIO,
+  storePromocodeIO,
+  lastEnteredPromocodeIO,
+} from "../discount"
 import { parseLocation } from "../common"
 
-/* TODO: Store last input promocode in cookies */
 /* TODO: Do not let apply coupons twice */
 
 /* TODO: contact section */
@@ -211,12 +214,20 @@ const CheckoutForm = ({ data, query }) => {
   const [state, setState] = React.useState({
     shipping_city: product.shipping[0].destination,
     shipping_address: "",
-    promocode: (query.code || "").toUpperCase(),
+    promocode: (
+      query.code ||
+      lastEnteredPromocodeIO(product) ||
+      ""
+    ).toUpperCase(),
     comment: "",
   })
 
   const shipping = getShipping(product, state.shipping_city)
+
   const coupon = discountCouponIO(product, state.promocode)
+  if (coupon.discount) {
+    storePromocodeIO(product, state.promocode)
+  }
 
   const order = [
     {

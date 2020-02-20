@@ -25,6 +25,10 @@ const int_to_hours = d => {
 
 const toHours = timedelta => parseInt(Math.round(timedelta / (60 * 60 * 1000)))
 
+const default_cookie_params = {
+  maxAge: 30 * 24 * 60 * 60,
+}
+
 const couponDescription = (coupon, currentTime) => {
   if (!coupon.discount) {
     return ``
@@ -71,12 +75,7 @@ const loadCouponIO = (product, code, currentTime) => {
   if (cookie == undefined) {
     const coupon = couponBase(product, code, currentTime)
     if (coupon.discount) {
-      cookies.set(cookie_name, coupon, {
-        maxAge: 30 * 24 * 60 * 60,
-      })
-      cookies.set(couponLastCookie(product), code, {
-        maxAge: 30 * 24 * 60 * 60,
-      })
+      cookies.set(cookie_name, coupon, default_cookie_params)
     }
     return coupon
   }
@@ -85,7 +84,7 @@ const loadCouponIO = (product, code, currentTime) => {
 }
 
 const couponCookie = (product, code) => `${product.pid}_${code}`
-const couponLastCookie = (product) => `Last_promocode_of_${product.pid}`
+const couponLastCookie = product => `Last_promocode_of_${product.pid}`
 
 const discountCouponIO = (product, code) => {
   const currentTime = new Date()
@@ -103,4 +102,14 @@ const discountCouponIO = (product, code) => {
   }
 }
 
-export { discountCouponIO }
+const lastEnteredPromocodeIO = product => {
+  const cookies = new Cookies()
+  return cookies.get(couponLastCookie(product))
+}
+
+const storePromocodeIO = (product, code) => {
+  const cookies = new Cookies()
+  cookies.set(couponLastCookie(product), code, default_cookie_params)
+}
+
+export { discountCouponIO, storePromocodeIO, lastEnteredPromocodeIO }
