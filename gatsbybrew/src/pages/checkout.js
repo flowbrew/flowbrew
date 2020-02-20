@@ -13,8 +13,18 @@ import theme from "../theme"
 import React, { Component } from "react"
 import * as R from "ramda"
 import { ImageContext } from "../components/ImageDataWrapper"
+import Table from "@material-ui/core/Table"
+import TableBody from "@material-ui/core/TableBody"
+import TableCell from "@material-ui/core/TableCell"
+import TableContainer from "@material-ui/core/TableContainer"
+import TableHead from "@material-ui/core/TableHead"
+import TableRow from "@material-ui/core/TableRow"
 
 /* HARD: promocode support */
+/* TODO: contact section */
+/* TODO: add buy and back buttons */
+/* TODO: Add image with caption and set caption to product */
+/* TODO: fix margins and paddings */
 
 const pageContext = {
   frontmatter: {
@@ -76,7 +86,7 @@ const ContactInfo = () => (
 )
 
 const ShippingInfo = ({ product, address, city, onChange }) => {
-  const shipping = R.find(R.pathEq(["destination"], city), product.shipping)
+  const shipping = getShipping(product, city)
 
   return (
     <Container>
@@ -113,8 +123,42 @@ const ShippingInfo = ({ product, address, city, onChange }) => {
   )
 }
 
-const PriceInfo = () => (
+function ccyFormat(num) {
+  return `${num.toFixed(2)}`
+}
+
+const allOrderPrices = R.map(R.path(["price"]))
+const totalOrderPrice = R.compose(R.sum, allOrderPrices)
+
+const PriceInfo = ({ order }) => (
   <Container>
+    <TableContainer component={Paper}>
+      <Table aria-label="spanning table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Наименование</TableCell>
+            <TableCell align="right">Цена</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {R.map(
+            ({ desc, price }) => (
+              <TableRow key={desc}>
+                <TableCell>{desc}</TableCell>
+                <TableCell align="right">{ccyFormat(price)}</TableCell>
+              </TableRow>
+            ),
+            order
+          )}
+          <TableRow>
+            <TableCell>Итого</TableCell>
+            <TableCell align="right">
+              {ccyFormat(totalOrderPrice(order))}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
     <Panel>
       <SRegularParagraph>
         Вы можете оплатить заказ после получения. Оплата банковским переводом на
@@ -124,6 +168,9 @@ const PriceInfo = () => (
   </Container>
 )
 
+const getShipping = (product, city) =>
+  R.find(R.pathEq(["destination"], city), product.shipping)
+
 const CheckoutForm = ({ data }) => {
   const product = data.product
 
@@ -131,6 +178,13 @@ const CheckoutForm = ({ data }) => {
     shipping_city: product.shipping[0].destination,
     shipping_address: "",
   })
+
+  const shipping = getShipping(product, state.shipping_city)
+
+  const order = [
+    { desc: `${product.name} ${product.weight} г`, price: product.price },
+    { desc: "Доставка", price: shipping ? shipping.cost : 0.0 },
+  ]
 
   const handleInputChange = event => {
     const target = event.target
@@ -150,7 +204,11 @@ const CheckoutForm = ({ data }) => {
         city={state.shipping_city}
         onChange={handleInputChange}
       />
-      <PriceInfo />
+      <PriceInfo order={order} />
+      <Container>
+        <MyTextField field="promocode" />
+        <MyTextField field="comment" />
+      </Container>
     </>
   )
 }
@@ -203,6 +261,7 @@ export const query = graphql`
       price
       quantity
       images
+      weight
       shipping {
         destination
         cost
