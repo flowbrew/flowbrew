@@ -12,10 +12,9 @@ import { styled } from "@material-ui/styles"
 import theme from "../theme"
 import React, { Component } from "react"
 import * as R from "ramda"
-import {ImageContext} from "../components/ImageDataWrapper"
+import { ImageContext } from "../components/ImageDataWrapper"
 
 /* HARD: promocode support */
-/* TODO: shipping switch */
 
 const pageContext = {
   frontmatter: {
@@ -45,8 +44,14 @@ const SRegularParagraph = styled(({ children }) => (
   marginBottom: theme.spacing(3),
 })
 
-const MyTextField = ({ field }) => (
-  <STextField id={field} label={field} variant="outlined" />
+const MyTextField = ({ name, field, ...props }) => (
+  <STextField
+    name={name}
+    id={name}
+    label={field}
+    variant="outlined"
+    {...props}
+  />
 )
 
 // TODO: how to apply styles?
@@ -70,20 +75,22 @@ const ContactInfo = () => (
   </Container>
 )
 
-const ShippingInfo = ({ product, selected_shipping, onChange }) => {
+const ShippingInfo = ({ product, address, city, onChange }) => {
+  const shipping = R.find(R.pathEq(["destination"], city), product.shipping)
+
   return (
     <Container>
       <Panel>
         <RadioGroup
           aria-label="gender"
-          value={selected_shipping}
-          name="gender1"
+          value={city}
+          name="shipping_city"
           onChange={onChange}
         >
           {R.map(
             ({ destination, cost, description }) => (
               <FormControlLabel
-                value={{ destination, cost, description }}
+                value={destination}
                 control={<Radio />}
                 label={destination}
                 key={destination}
@@ -92,8 +99,15 @@ const ShippingInfo = ({ product, selected_shipping, onChange }) => {
             product.shipping
           )}
         </RadioGroup>
-        <MyTextField field="address" />
-        <SRegularParagraph>{selected_shipping.description}</SRegularParagraph>
+        <MyTextField
+          value={address}
+          name="shipping_address"
+          field="address"
+          onChange={onChange}
+        />
+        <SRegularParagraph>
+          {shipping && shipping.description}
+        </SRegularParagraph>
       </Panel>
     </Container>
   )
@@ -111,25 +125,31 @@ const PriceInfo = () => (
 )
 
 const CheckoutForm = ({ data }) => {
-  const [state, setState] = React.useState({
-    selected_shipping: null,
-  })
-
   const product = data.product
 
-  const onCityChange = event => {
-    setState({ ...state, selected_shipping: event.target.value })
+  const [state, setState] = React.useState({
+    shipping_city: product.shipping[0].destination,
+    shipping_address: "",
+  })
+
+  const handleInputChange = event => {
+    const target = event.target
+    const value = target.type === "checkbox" ? target.checked : target.value
+    const name = target.name
+
+    setState({ ...state, [name]: value })
   }
-  
+
   return (
     <>
       <Product data={data} />
       <ContactInfo />
       <ShippingInfo
-          prodcut={product}
-          selected_shipping={null}
-          onChange={onCityChange}
-        />
+        product={product}
+        address={state.shipping_address}
+        city={state.shipping_city}
+        onChange={handleInputChange}
+      />
       <PriceInfo />
     </>
   )
