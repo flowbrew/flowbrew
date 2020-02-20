@@ -19,11 +19,11 @@ import TableCell from "@material-ui/core/TableCell"
 import TableContainer from "@material-ui/core/TableContainer"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
-import { discountFrom } from "../discount"
+import { discountCoupon } from "../discount"
+import { parseLocation } from "../common"
 
-/* TODO: Get promocode from url params */
-/* TODO: Get promocode from promocode string */
-/* TODO: Apply discount from discount rules */
+/* TODO: Display promocode timeout */
+/* TODO: Add promocode timeout */
 
 /* TODO: contact section */
 /* TODO: add buy and back buttons */
@@ -205,18 +205,19 @@ const PriceInfo = ({ order }) => (
 const getShipping = (product, city) =>
   R.find(R.pathEq(["destination"], city), product.shipping)
 
-const CheckoutForm = ({ data }) => {
+const CheckoutForm = ({ data, query }) => {
   const product = data.product
 
   const [state, setState] = React.useState({
     shipping_city: product.shipping[0].destination,
     shipping_address: "",
-    promocode: "",
+    promocode: (query.code || "").toUpperCase(),
     comment: "",
   })
 
   const shipping = getShipping(product, state.shipping_city)
-  const discount = discountFrom(product, state.promocode)
+  const coupon = discountCoupon(product, state.promocode)
+  const discount = coupon.discount
 
   const order = [
     {
@@ -233,7 +234,9 @@ const CheckoutForm = ({ data }) => {
     const value = target.type === "checkbox" ? target.checked : target.value
     const name = target.name
 
-    setState({ ...state, [name]: value })
+    const value2 = name === "promocode" ? value.toUpperCase() : value
+
+    setState({ ...state, [name]: value2 })
   }
 
   return (
@@ -265,7 +268,9 @@ const CheckoutForm = ({ data }) => {
   )
 }
 
-export default ({ data }) => {
+export default ({ data, location }) => {
+  const query = parseLocation(location)
+
   return (
     <ImageContext.Provider
       value={{
@@ -274,7 +279,7 @@ export default ({ data }) => {
       }}
     >
       <PageLayout pageContext={pageContext}>
-        <CheckoutForm data={data} />
+        <CheckoutForm data={data} query={query} />
       </PageLayout>
     </ImageContext.Provider>
   )

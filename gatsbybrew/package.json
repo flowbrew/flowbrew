@@ -36,6 +36,7 @@
     "intersection-observer": "^0.7.0",
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
+    "query-string": "^6.11.0",
     "ramda": "^0.27.0",
     "react": "^16.12.0",
     "react-aspect-ratio": "^1.0.41",
