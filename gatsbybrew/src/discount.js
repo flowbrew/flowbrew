@@ -94,6 +94,10 @@ const discountCouponIO = (product, code) => {
     return { discount: 0.0 }
   }
 
+  if (coupon.discount) {
+    storePromocodeIO(product, code)
+  }
+
   return {
     product: product,
     code: code,
@@ -112,6 +116,14 @@ const storePromocodeIO = (product, code) => {
   cookies.set(couponLastCookie(product), code, default_cookie_params)
 }
 
-// const promocodeFromEnvironmentIO = () => 
+const applyCoupon = (product, coupon) =>
+  product.price * (1.0 - coupon.discount || 0.0)
 
-export { discountCouponIO, storePromocodeIO, lastEnteredPromocodeIO }
+// const promocodeFromEnvironmentIO = () =>
+
+export {
+  discountCouponIO,
+  storePromocodeIO,
+  lastEnteredPromocodeIO,
+  applyCoupon,
+}

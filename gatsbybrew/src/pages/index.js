@@ -9,9 +9,9 @@ const FAQ = () => null
 const SignatureSection = () => null
 const BuyButtonSection = () => null
 
-const Index = () => {
+const Index = ({location}) => {
   return (
-    <MainLayout>
+    <MainLayout location={location}>
       <InfoSection />
       <InfoSection />
       <OfferSection />

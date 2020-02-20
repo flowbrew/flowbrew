@@ -23,6 +23,7 @@ import {
   discountCouponIO,
   storePromocodeIO,
   lastEnteredPromocodeIO,
+  applyCoupon,
 } from "../discount"
 import { parseLocation } from "../common"
 
@@ -208,32 +209,24 @@ const PriceInfo = ({ order }) => (
 const getShipping = (product, city) =>
   R.find(R.pathEq(["destination"], city), product.shipping)
 
-const CheckoutForm = ({ data, query }) => {
+const CheckoutForm = ({ data }) => {
   const product = data.product
 
   const [state, setState] = React.useState({
     shipping_city: product.shipping[0].destination,
     shipping_address: "",
-    promocode: (
-      query.code ||
-      lastEnteredPromocodeIO(product) ||
-      ""
-    ).toUpperCase(),
+    promocode: (lastEnteredPromocodeIO(product) || "").toUpperCase(),
     comment: "",
   })
 
   const shipping = getShipping(product, state.shipping_city)
-
   const coupon = discountCouponIO(product, state.promocode)
-  if (coupon.discount) {
-    storePromocodeIO(product, state.promocode)
-  }
 
   const order = [
     {
       desc: `${product.name} ${product.weight} г`,
       discount_desc: coupon.coupon_description || ``,
-      price: product.price * (1.0 - coupon.discount || 0.0),
+      price: applyCoupon(product, coupon),
       orig_price: product.price,
     },
     { desc: "Доставка", price: shipping ? shipping.cost : 0.0 },
@@ -279,8 +272,6 @@ const CheckoutForm = ({ data, query }) => {
 }
 
 export default ({ data, location }) => {
-  const query = parseLocation(location)
-
   return (
     <ImageContext.Provider
       value={{
@@ -288,8 +279,8 @@ export default ({ data, location }) => {
         images_data: data.images_data,
       }}
     >
-      <PageLayout pageContext={pageContext}>
-        <CheckoutForm data={data} query={query} />
+      <PageLayout pageContext={pageContext} location={location}>
+        <CheckoutForm data={data} />
       </PageLayout>
     </ImageContext.Provider>
   )

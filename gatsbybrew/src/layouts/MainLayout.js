@@ -19,10 +19,11 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import List from "@material-ui/core/List"
 import InnerLink from "../components/InnerLink"
-
+import { parseLocation } from "../common"
 import ShoppingCart from "@material-ui/icons/ShoppingCart"
-
+import { discountCouponIO, storePromocodeIO } from "../discount"
 import { useStaticQuery, Link } from "gatsby"
+import PropTypes from 'prop-types';
 import * as R from "ramda"
 
 const Seo = () => <Helmet></Helmet>
@@ -140,8 +141,8 @@ const Footer = ({ data }) => {
         <Grid container spacing={2} style={{ paddingTop: theme.spacing(2) }}>
           {R.map(
             ({ link, title, icon }) => (
-              <Grid item xs={12} sm={3} key={link} >
-                <InnerLink to={link} >
+              <Grid item xs={12} sm={3} key={link}>
+                <InnerLink to={link}>
                   <Typography variant="button" color="textSecondary">
                     {title}
                   </Typography>
@@ -170,9 +171,12 @@ const FullScreenBox = styled(Box)({
 
 /* --------- */
 
-/* TODO: apply promocode from url param from any website page */
+const applyPromocodeFromQueryIO = (product, location) => {
+  const query = parseLocation(location)
+  const _ = discountCouponIO(product, query.code)
+}
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, location }) => {
   const data = useStaticQuery(graphql`
     query {
       navigation: allNavigationYaml {
@@ -182,8 +186,15 @@ const MainLayout = ({ children }) => {
           icon
         }
       }
+
+      product: productsYaml(pid: { eq: "flowbrew60" }) {
+        name
+        pid
+      }
     }
   `)
+
+  applyPromocodeFromQueryIO(data.product, location)
 
   return (
     <FlbTheme>
@@ -196,6 +207,10 @@ const MainLayout = ({ children }) => {
       </FullScreenBox>
     </FlbTheme>
   )
+}
+
+MainLayout.propTypes = {
+  location: PropTypes.any.isRequired,
 }
 
 export default MainLayout

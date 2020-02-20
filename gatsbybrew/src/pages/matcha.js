@@ -28,7 +28,11 @@ import RegularHeader from "../components/RegularHeader"
 import RegularParagraph from "../components/RegularParagraph"
 import MainLayout from "../layouts/MainLayout"
 import lorem from "../lorem"
-import { discountCouponIO, lastEnteredPromocodeIO } from "../discount"
+import {
+  discountCouponIO,
+  lastEnteredPromocodeIO,
+  applyCoupon,
+} from "../discount"
 
 /* TODO: add ability to display discount */
 /* TODO: load coupon from cookies */
@@ -100,11 +104,17 @@ const OfferHeader = ({ product }) => {
   const promocode = lastEnteredPromocodeIO(product)
   const coupon = discountCouponIO(product, promocode)
 
+  const orig_price = product.price
+  const price = applyCoupon(product, coupon)
+
+  // discount_desc: coupon.coupon_description || ``,
+  // price: product.price * (1.0 - coupon.discount || 0.0),
+
   return (
     <Box>
       <RegularHeader>{lorem.generateWords(2)}</RegularHeader>
       <Rating name="size-medium" defaultValue={5} readOnly />
-      <RegularParagraph>{product.price}</RegularParagraph>
+      <RegularParagraph>{price}</RegularParagraph>
     </Box>
   )
 }
@@ -226,7 +236,7 @@ const SignatureSection = () => (
   </Section>
 )
 
-export default ({ data }) => {
+export default ({ data, location }) => {
   const Context = ({ children }) => (
     <PageContext.Provider value={data}>
       <ImageContext.Provider
@@ -242,7 +252,7 @@ export default ({ data }) => {
 
   return (
     <Context>
-      <MainLayout>
+      <MainLayout location={location}>
         <Hero />
         {/*<PlaceholderSection />
         <PlaceholderSection /> */}
