@@ -170,6 +170,8 @@ const FullScreenBox = styled(Box)({
 
 /* --------- */
 
+/* TODO: apply promocode from url param from any website page */
+
 const MainLayout = ({ children }) => {
   const data = useStaticQuery(graphql`
     query {

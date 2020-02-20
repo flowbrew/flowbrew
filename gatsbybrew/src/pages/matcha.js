@@ -28,6 +28,10 @@ import RegularHeader from "../components/RegularHeader"
 import RegularParagraph from "../components/RegularParagraph"
 import MainLayout from "../layouts/MainLayout"
 import lorem from "../lorem"
+import { discountCouponIO, lastEnteredPromocodeIO } from "../discount"
+
+/* TODO: add ability to display discount */
+/* TODO: load coupon from cookies */
 
 /* TODO: Features sections */
 /* TODO: quantity and headless ecommerce*/
@@ -90,14 +94,20 @@ class OfferImages extends Component {
 }
 
 /* TODO: fancy font*/
-/* TODO: discount display and connet to product price*/
-const OfferHeader = () => (
-  <Box>
-    <RegularHeader>{lorem.generateWords(2)}</RegularHeader>
-    <Rating name="size-medium" defaultValue={5} readOnly />
-    <RegularParagraph>3380 rub</RegularParagraph>
-  </Box>
-)
+/* TODO: and display weight and cups*/
+
+const OfferHeader = ({ product }) => {
+  const promocode = lastEnteredPromocodeIO(product)
+  const coupon = discountCouponIO(product, promocode)
+
+  return (
+    <Box>
+      <RegularHeader>{lorem.generateWords(2)}</RegularHeader>
+      <Rating name="size-medium" defaultValue={5} readOnly />
+      <RegularParagraph>{product.price}</RegularParagraph>
+    </Box>
+  )
+}
 
 const OfferFeatures = () => (
   <ul>
@@ -158,10 +168,11 @@ const InfoSection = ({ left, right }) => (
 )
 
 const OfferSection = ({ data }) => {
+  const product = data.product
   return (
     <Section>
-      <OfferHeader />
-      <OfferImages product={data.product} />
+      <OfferHeader product={product} />
+      <OfferImages product={product} />
       <OfferFeatures />
       <Promotion />
       <BuyButton />

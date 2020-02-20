@@ -112,4 +112,6 @@ const storePromocodeIO = (product, code) => {
   cookies.set(couponLastCookie(product), code, default_cookie_params)
 }
 
+// const promocodeFromEnvironmentIO = () => 
+
 export { discountCouponIO, storePromocodeIO, lastEnteredPromocodeIO }
