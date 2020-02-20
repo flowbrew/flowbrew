@@ -40,7 +40,6 @@ import { RedBox, CrossedBox } from "../common"
 /* TODO: faq section*/
 /* TODO: reviews section */
 /* TODO: GTM */
-/* HARD: Add discount on the second visit */
 /* TODO: fonts and colors */
 
 const PageContext = React.createContext({})

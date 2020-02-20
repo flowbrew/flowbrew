@@ -1,5 +1,7 @@
 import Cookies from "universal-cookie"
 
+/* TODO: add e2e discount test */
+
 const extractCodeFromUrl = () => null
 
 const int_to_ = (d_, a, b, c) => {
@@ -121,11 +123,37 @@ const storePromocodeIO = (product, code) => {
 const applyCoupon = (product, coupon) =>
   product.price * (1.0 - coupon.discount || 0.0)
 
-// const promocodeFromEnvironmentIO = () =>
+const updateVisitHistoryIO = location => {
+  const cookies = new Cookies()
+  const cookie_name = `visit_history`
+
+  const visit_history = cookies.get(cookie_name) || {}
+
+  const new_history = {
+    ...visit_history,
+    ...{ [location.pathname]: (visit_history[location.pathname] || 0) + 1 },
+  }
+
+  cookies.set(cookie_name, new_history, default_cookie_params)
+
+  return new_history
+}
+
+const autoPromotionIO = (product, location) => {
+  var history = updateVisitHistoryIO(location)
+
+  const promotion1 = (history["/matcha"] || 0) == 2
+  const promotion2 = (history["/checkout"] || 0) == 1
+
+  if (promotion1 || promotion2) {
+    storePromocodeIO(product, "GIFT10")
+  }
+}
 
 export {
   discountCouponIO,
   storePromocodeIO,
   lastEnteredPromocodeIO,
   applyCoupon,
+  autoPromotionIO,
 }

@@ -21,15 +21,17 @@ import List from "@material-ui/core/List"
 import InnerLink from "../components/InnerLink"
 import { parseLocation } from "../common"
 import ShoppingCart from "@material-ui/icons/ShoppingCart"
-import { discountCouponIO, storePromocodeIO } from "../discount"
+import { discountCouponIO, autoPromotionIO } from "../discount"
 import { useStaticQuery, Link } from "gatsby"
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types"
 import * as R from "ramda"
 
 const Seo = () => <Helmet></Helmet>
 
+const HEADER_CONTENT_HEIGHT = "40px"
+
 const LogoTextH = styled(LogoText)({
-  maxHeight: "40px",
+  maxHeight: HEADER_CONTENT_HEIGHT,
   margin: "auto",
 })
 
@@ -171,6 +173,10 @@ const FullScreenBox = styled(Box)({
   minHeight: "100vh",
 })
 
+const Skipper = styled(Box)({
+  height: HEADER_CONTENT_HEIGHT,
+})
+
 /* --------- */
 
 const applyPromocodeFromQueryIO = (product, location) => {
@@ -196,6 +202,7 @@ const MainLayout = ({ children, location }) => {
     }
   `)
 
+  autoPromotionIO(data.product, location)
   applyPromocodeFromQueryIO(data.product, location)
 
   return (
@@ -204,6 +211,7 @@ const MainLayout = ({ children, location }) => {
       <CssBaseline />
       <FullScreenBox>
         <Header data={data} />
+        <Skipper />
         <Main>{children}</Main>
         <Footer data={data} />
       </FullScreenBox>
