@@ -19,10 +19,10 @@ import TableCell from "@material-ui/core/TableCell"
 import TableContainer from "@material-ui/core/TableContainer"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
-import { discountCoupon } from "../discount"
+import { discountCouponIO } from "../discount"
 import { parseLocation } from "../common"
 
-/* TODO: Add promocode timeout */
+/* TODO: Save promocode to cookies */
 
 /* TODO: contact section */
 /* TODO: add buy and back buttons */
@@ -215,13 +215,13 @@ const CheckoutForm = ({ data, query }) => {
   })
 
   const shipping = getShipping(product, state.shipping_city)
-  const coupon = discountCoupon(product, state.promocode, 0)
+  const coupon = discountCouponIO(product, state.promocode)
 
   const order = [
     {
       desc: `${product.name} ${product.weight} г`,
-      discount_desc: coupon.coupon_description,
-      price: product.price * (1.0 - coupon.discount),
+      discount_desc: coupon.coupon_description || ``,
+      price: product.price * (1.0 - coupon.discount || 0.0),
       orig_price: product.price,
     },
     { desc: "Доставка", price: shipping ? shipping.cost : 0.0 },
