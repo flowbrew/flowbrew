@@ -1,16 +1,11 @@
 version: 0.1
-backend:
-  phases:
-    build:
-      commands:
-        - cd gatsbybrew
-        - amplifyPush --simple
 frontend:
   phases:
     preBuild:
       commands:
         # - if [ "${AWS_BRANCH}" = "master" ]; then echo "master branch"; fi
         # - if [ "${AWS_BRANCH}" = "dev" ]; then echo "dev branch"; fi
+        - cd gatsbybrew
         - ls -a ./src
         - npm ci
     build:
