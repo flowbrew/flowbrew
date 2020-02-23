@@ -4,7 +4,7 @@ backend:
     build:
       commands:
         - cd gatsbybrew
-        - amplifyPush --environment master --simple
+        - amplifyPush --simple
 frontend:
   phases:
     preBuild:
