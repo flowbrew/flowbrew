@@ -1,7 +1,7 @@
 {
     "paths": [
         {
-            "name": "/items",
+            "name": "/master",
             "lambdaFunction": "hello",
             "privacy": {
                 "open": true
@@ -30,5 +30,6 @@
                 "Arn"
             ]
         }
-    ]
+    ],
+    "uuid": "0e8c9f7d"
 }

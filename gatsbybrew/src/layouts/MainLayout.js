@@ -24,7 +24,9 @@ import { discountCouponIO, autoPromotionIO } from "../discount"
 import { useStaticQuery, Link } from "gatsby"
 import PropTypes from "prop-types"
 import * as R from "ramda"
-import { API } from "aws-amplify"
+import Amplify, { API } from "aws-amplify"
+import awsconfig from '../aws-exports';
+Amplify.configure(awsconfig);
 
 const Seo = () => <Helmet></Helmet>
 
