@@ -63,7 +63,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-gatsbybrew-master-211224-deployment",
-					"S3Key": "amplify-builds/hello-524e394d67727a333561-build.zip"
+					"S3Key": "amplify-builds/hello-446f5161776e33494e48-build.zip"
 				}
 			}
 		},
@@ -73,12 +73,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"gatsbybrewLambdaRolef0adf487",
+						"gatsbybrewLambdaRole0a29f273",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"gatsbybrewLambdaRolef0adf487",
+									"gatsbybrewLambdaRole0a29f273",
 									"-",
 									{
 										"Ref": "env"

@@ -1,19 +1,9 @@
-/* Amplify Params - DO NOT EDIT
-You can access the following resource attributes as environment variables from your Lambda function
-var environment = process.env.ENV
-var region = process.env.REGION
+const awsServerlessExpress = require('aws-serverless-express');
+const app = require('./app');
 
-Amplify Params - DO NOT EDIT */
+const server = awsServerlessExpress.createServer(app);
 
-exports.handler = async event => {
-  // TODO implement
-  const response = {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Credentials": true,
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify("Hello from Lambda!"),
-  }
-  return response
-}
+exports.handler = (event, context) => {
+  console.log(`EVENT: ${JSON.stringify(event)}`);
+  awsServerlessExpress.proxy(server, event, context);
+};
