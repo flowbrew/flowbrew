@@ -3,6 +3,7 @@ backend:
   phases:
     build:
       commands:
+        - cd gatsbybrew
         - amplifyPush --environment master --simple
 frontend:
   phases:
