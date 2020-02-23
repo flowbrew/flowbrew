@@ -14,7 +14,7 @@
   command = "npm run-script build"
 
   # Directory with the serverless Lambda functions to deploy to AWS.
-  functions = "functions"
+  functions = "lambda"
 
 # Production context: all deploys from the Production branch set in your site's
 # deploy contexts will inherit these settings.
