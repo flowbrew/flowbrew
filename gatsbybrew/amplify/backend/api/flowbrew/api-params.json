@@ -1,0 +1,34 @@
+{
+    "paths": [
+        {
+            "name": "/flowbrew",
+            "lambdaFunction": "hello",
+            "privacy": {
+                "open": true
+            }
+        }
+    ],
+    "resourceName": "flowbrew",
+    "apiName": "flowbrew",
+    "functionArns": [
+        {
+            "lambdaFunction": "hello"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "amplify-gatsbybrew-master-211224-authRole",
+        "unAuthRoleName": "amplify-gatsbybrew-master-211224-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "hello",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}

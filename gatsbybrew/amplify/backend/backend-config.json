@@ -13,7 +13,7 @@
 		}
 	},
 	"api": {
-		"public": {
+		"flowbrew": {
 			"service": "API Gateway",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [

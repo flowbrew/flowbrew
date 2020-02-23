@@ -35,12 +35,12 @@ app.use(function(req, res, next) {
  * Example get method *
  **********************/
 
-app.get('/public', function(req, res) {
+app.get('/flowbrew', function(req, res) {
   // Add your code here
   res.json({success: 'get call succeed!', url: req.url});
 });
 
-app.get('/public/*', function(req, res) {
+app.get('/flowbrew/*', function(req, res) {
   // Add your code here
   res.json({success: 'get call succeed!', url: req.url});
 });
@@ -49,12 +49,12 @@ app.get('/public/*', function(req, res) {
 * Example post method *
 ****************************/
 
-app.post('/public', function(req, res) {
+app.post('/flowbrew', function(req, res) {
   // Add your code here
   res.json({success: 'post call succeed!', url: req.url, body: req.body})
 });
 
-app.post('/public/*', function(req, res) {
+app.post('/flowbrew/*', function(req, res) {
   // Add your code here
   res.json({success: 'post call succeed!', url: req.url, body: req.body})
 });
@@ -63,12 +63,12 @@ app.post('/public/*', function(req, res) {
 * Example put method *
 ****************************/
 
-app.put('/public', function(req, res) {
+app.put('/flowbrew', function(req, res) {
   // Add your code here
   res.json({success: 'put call succeed!', url: req.url, body: req.body})
 });
 
-app.put('/public/*', function(req, res) {
+app.put('/flowbrew/*', function(req, res) {
   // Add your code here
   res.json({success: 'put call succeed!', url: req.url, body: req.body})
 });
@@ -77,12 +77,12 @@ app.put('/public/*', function(req, res) {
 * Example delete method *
 ****************************/
 
-app.delete('/public', function(req, res) {
+app.delete('/flowbrew', function(req, res) {
   // Add your code here
   res.json({success: 'delete call succeed!', url: req.url});
 });
 
-app.delete('/public/*', function(req, res) {
+app.delete('/flowbrew/*', function(req, res) {
   // Add your code here
   res.json({success: 'delete call succeed!', url: req.url});
 });
