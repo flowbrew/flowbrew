@@ -205,7 +205,7 @@ const MainLayout = ({ children, location }) => {
   
   useEffect(() => {
     async function sideEffect() {
-      const data = await API.get('public', '/hello')
+      const data = await API.get('flowbrew', '/hello')
       console.info('----->', data)
     }
 
