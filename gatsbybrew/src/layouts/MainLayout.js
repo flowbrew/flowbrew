@@ -9,7 +9,7 @@ import { styled, ThemeProvider, makeStyles } from "@material-ui/core/styles"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import MenuIcon from "@material-ui/icons/Menu"
-import React from "react"
+import React, {useEffect} from "react"
 import Helmet from "react-helmet"
 import theme from "../theme"
 import LogoText from "../images/logo_text.svg"
@@ -24,6 +24,9 @@ import { discountCouponIO, autoPromotionIO } from "../discount"
 import { useStaticQuery, Link } from "gatsby"
 import PropTypes from "prop-types"
 import * as R from "ramda"
+import Amplify, { API } from "aws-amplify"
+import awsconfig from '../aws-exports';
+Amplify.configure(awsconfig);
 
 const Seo = () => <Helmet></Helmet>
 
@@ -199,6 +202,15 @@ const MainLayout = ({ children, location }) => {
   `)
 
   autoPromotionIO(data.product, location)
+  
+  useEffect(() => {
+    async function sideEffect() {
+      const data = await API.get('flowbrew', '/flowbrew')
+      console.info('----->', data)
+    }
+
+    sideEffect();
+  });
 
   return (
     <FlbTheme>
